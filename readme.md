@@ -12,10 +12,6 @@ Plugin to create dashboard view report for pytest (no code changes)
 Sample Report - [link](http://pytest-metrics.netlify.com)
 > Best viewed in desktop
 
-Sample Screenshot:
-
-
-
 ---
 
 ### Why Pytest-Metrics
@@ -60,9 +56,10 @@ Sample Screenshot:
 3. Report with created after execution
 
 **Note:** Users can customize logo by using following command
-    ```
-    pytest --menable=True --mlogo="mycompanylogo.png"
-    ```
+
+```
+pytest --menable=True --mlogo="mycompanylogo.png"
+```
 
 ---
 
@@ -85,7 +82,10 @@ Found issue report [here](https://github.com/adiralashiva8/pytest-metrics/issues
  - [Pytest-dev](https://github.com/pytest-dev)
  - [Stackoverflow](https://stackoverflow.com/questions/tagged/pytest)
  - [Datatable](https://datatables.net)
+ - [GoogleCharts](https://developers.google.com/chart/interactive/docs/gallery)
  - [pytest-community]()
+
+*Pytest-metrics* uses above items to create report
 
 ---
 
