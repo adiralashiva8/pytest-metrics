@@ -1,302 +1,4 @@
-import pytest
-import time
-import platform
-import datetime
-import sys
 
-from _pytest.runner import pytest_runtest_setup
-from _pytest.runner import runtestprotocol
-from _pytest.runner import pytest_runtest_teardown
-
-_total = 0
-_executed = 0
-_pass = 0
-_fail = 0
-_skip = 0
-_error = 0
-_xpass = 0
-_xfail = 0
-_current_error = ""
-_suite_name = None
-_test_name = None
-_test_status = None
-_test_start_time = None
-_excution_time = 0
-_test_metrics_content = ""
-_suite_metrics_content = ""
-_duration = 0
-_previous_suite_name = "None"
-_initial_trigger = True
-_spass_tests = 0
-_sfail_tests = 0
-_sskip_tests = 0
-_serror_tests = 0
-_sxfail_tests = 0
-_sxpass_tests = 0
-
-def pytest_addoption(parser):
-    group = parser.getgroup('metrics')
-    group.addoption(
-        '--menable',
-        action='store',
-        dest='menable',
-        default="False",
-        help='Enable or disable metrics report'
-    )
-    group.addoption(
-        '--mlogo',
-        action='store',
-        dest='mlogo',
-        default="https://i.ibb.co/RQSJvLB/Shiva-Pytest-Trans.png",
-        help='Logo to use in metrics report'
-    )
-
-def pytest_runtest_setup(item):
-    global _test_start_time
-    _test_start_time = time.time()
-
-@pytest.hookimpl(tryfirst=True, hookwrapper=True)
-def pytest_runtest_makereport(item, call):
-    outcome = yield
-    rep = outcome.get_result()
-
-    global _suite_name
-    _suite_name = rep.nodeid.split("::")[0]
-
-    if _initial_trigger :
-        update_previous_suite_name()
-        set_initial_trigger()
-    
-    if str(_previous_suite_name) != str(_suite_name):
-        append_suite_metrics_row(_previous_suite_name)
-        update_previous_suite_name()
-        reset_counts()
-    else:
-        update_counts(rep)
-    
-    if rep.when == "call" and rep.passed:
-        if hasattr(rep, "wasxfail"):
-            increment_xpass()
-            update_test_status("xPASS")
-            global _current_error
-            update_test_error("")
-        else:
-            increment_pass()
-            update_test_status("PASS")
-            update_test_error("")
-    
-    if rep.failed:
-        if getattr(rep, "when", None) == "call":
-            if hasattr(rep, "wasxfail"):
-                increment_xpass()
-                update_test_status("xPASS")
-                update_test_error("")
-            else:
-                increment_fail()
-                update_test_status("FAIL")
-                if rep.longrepr:
-                    for line in rep.longreprtext.splitlines():
-                        exception = line.startswith("E   ")
-                        if exception:
-                            update_test_error(line.replace("E    ",""))
-        else:
-            increment_error()
-            update_test_status("ERROR")
-            if rep.longrepr:
-                for line in rep.longreprtext.splitlines():
-                    update_test_error(line)
-    
-    if rep.skipped:
-        if hasattr(rep, "wasxfail"):
-            increment_xfail()
-            update_test_status("xFAIL")
-            if rep.longrepr:
-                for line in rep.longreprtext.splitlines():
-                    exception = line.startswith("E   ")
-                    if exception:
-                        update_test_error(line.replace("E    ",""))
-        else:
-            increment_skip()
-            update_test_status("SKIP")
-            if rep.longrepr:
-                for line in rep.longreprtext.splitlines():
-                    update_test_error(line)
-        
-def pytest_runtest_teardown(item, nextitem):
-
-    _test_end_time = time.time()
-
-    global _test_name
-    _test_name = item.name
-
-    global _duration
-    _duration = _test_end_time - _test_start_time
-
-    # create list to save content
-    append_test_metrics_row()
-
-def pytest_sessionfinish(session):
-    append_suite_metrics_row(_suite_name)
-    reset_counts()
-    
-@pytest.hookimpl(hookwrapper=True)
-def pytest_terminal_summary(terminalreporter, exitstatus, config):
-    yield
-
-    if config.option.menable == "True":
-
-        global _excution_time
-        _excution_time = time.time() - terminalreporter._sessionstarttime
-        
-        global _total
-        _total =  _pass + _fail + _xpass + _xfail + _skip + _error
-
-        global _executed
-        _executed = _pass + _fail + _xpass + _xfail
-
-        # create live logs report and close
-        live_logs_file = open('pytest_metrics.html','w')
-        message = get_updated_template_text(str(config.option.mlogo))
-        live_logs_file.write(message)
-        live_logs_file.close()
-
-def append_suite_metrics_row(name):
-    suite_row_text = """
-        <tr>
-            <td style="width: 25%;">__sname__</td>
-            <td style="width: 10%; text-align:center;">__spass__</td>
-            <td style="width: 10%; text-align:center;">__sfail__</td>
-            <td style="width: 10%; text-align:center;">__sskip__</td>
-            <td style="width: 10%; text-align:center;">__sxpass__</td>
-            <td style="width: 10%; text-align:center;">__sxfail__</td>
-            <td style="width: 10%; text-align:center;">__serror__</td>
-        </tr>
-    """
-    suite_row_text = suite_row_text.replace("__sname__",str(name))
-    suite_row_text = suite_row_text.replace("__spass__",str(_spass_tests))
-    suite_row_text = suite_row_text.replace("__sfail__",str(_sfail_tests))
-    suite_row_text = suite_row_text.replace("__sskip__",str(_sskip_tests))
-    suite_row_text = suite_row_text.replace("__sxpass__",str(_sxpass_tests))
-    suite_row_text = suite_row_text.replace("__sxfail__",str(_sxfail_tests))
-    suite_row_text = suite_row_text.replace("__serror__",str(_serror_tests))
-
-    global _suite_metrics_content
-    _suite_metrics_content += suite_row_text
-
-def append_test_metrics_row():
-    test_row_text = """
-        <tr>
-            <td style="width: 25%;">__sname__</td>
-            <td style="width: 25%;">__name__</td>
-            <td style="width: 10%; text-align:center;">__stat__</td>
-            <td style="width: 10%; text-align:center;">__dur__</td>
-            <td style="width: 30%;">__msg__</td>
-        </tr>
-    """
-    test_row_text = test_row_text.replace("__sname__",str(_suite_name))
-    test_row_text = test_row_text.replace("__name__",str(_test_name))
-    test_row_text = test_row_text.replace("__stat__",str(_test_status))
-    test_row_text = test_row_text.replace("__dur__",str(round(_duration,2)))
-    test_row_text = test_row_text.replace("__msg__",str(_current_error))
-
-    global _test_metrics_content
-    _test_metrics_content += test_row_text
-
-def get_updated_template_text(logo_url):
-    template_text = get_html_template()
-    template_text = template_text.replace("__custom_logo__", logo_url)
-    template_text = template_text.replace("__execution_time__", str(round(_excution_time, 2)))
-    template_text = template_text.replace("__executed_by__", str(platform.uname()[1]))
-    template_text = template_text.replace("__os_name__", str(platform.uname()[0]))
-    template_text = template_text.replace("__python_version__", str(sys.version.split(' ')[0]))
-    template_text = template_text.replace("__generated_date__", str(datetime.datetime.now().strftime("%b %d %Y, %H:%M")))
-    template_text = template_text.replace("__total__", str(_total))
-    template_text = template_text.replace("__executed__", str(_executed))
-    template_text = template_text.replace("__pass__", str(_pass))
-    template_text = template_text.replace("__fail__", str(_fail))
-    template_text = template_text.replace("__skip__", str(_skip))
-    template_text = template_text.replace("__error__", str(_error))
-    template_text = template_text.replace("__xpass__", str(_xpass))
-    template_text = template_text.replace("__xfail__", str(_xfail))
-    template_text = template_text.replace("__suite_metrics_row__", str(_suite_metrics_content))
-    template_text = template_text.replace("__test_metrics_row__", str(_test_metrics_content))
-    return template_text
-
-def set_initial_trigger():
-    global _initial_trigger
-    _initial_trigger = False
-
-def update_previous_suite_name():
-    global _previous_suite_name
-    _previous_suite_name = _suite_name
-
-def update_counts(rep):
-    global _sfail_tests, _spass_tests, _sskip_tests, _serror_tests, _sxfail_tests, _sxpass_tests
-    
-    if rep.when == "call" and rep.passed:
-        if hasattr(rep, "wasxfail"):
-            _sxpass_tests += 1
-        else:
-            _spass_tests += 1
-    
-    if rep.failed:
-        if getattr(rep, "when", None) == "call":
-            if hasattr(rep, "wasxfail"):
-                _sxpass_tests += 1
-            else:
-                _sfail_tests += 1
-        else:
-            _serror_tests += 1
-    
-    if rep.skipped:
-        if hasattr(rep, "wasxfail"):
-            _sxfail_tests += 1
-        else:
-            _sskip_tests += 1
-
-def reset_counts():
-    global _sfail_tests, _spass_tests, _sskip_tests, _serror_tests, _sxfail_tests, _sxpass_tests
-    _spass_tests  = 0
-    _sfail_tests  = 0
-    _sskip_tests = 0
-    _serror_tests = 0
-    _sxfail_tests = 0
-    _sxpass_tests = 0
-
-def update_test_error(msg):
-    global _current_error
-    _current_error = msg
-
-def update_test_status(status):
-    global _test_status
-    _test_status = status
-
-def increment_xpass():
-    global _xpass
-    _xpass += 1
-
-def increment_xfail():
-    global _xfail
-    _xfail += 1
-
-def increment_pass():
-    global _pass
-    _pass += 1
-
-def increment_fail():
-    global _fail
-    _fail += 1
-
-def increment_skip():
-    global _skip
-    _skip += 1
-
-def increment_error():
-    global _error
-    _error += 1
-
-def get_html_template():
-	my_template = """
 	<!DOCTYPE doctype html>
     <html lang="en">
     <head>
@@ -422,7 +124,7 @@ def get_html_template():
     <body>
         <div class="loader"></div>
         <div class="sidenav">
-            <a><img src="__custom_logo__" style="height:20vh;max-width:98%;" /></a>
+            <a><img src="https://i.ibb.co/RQSJvLB/Shiva-Pytest-Trans.png" style="height:20vh;max-width:98%;" /></a>
             <a class="tablink" href="#" id="defaultOpen" onclick="openPage('dashboard', this, 'orange')"> <i class="fa fa-dashboard"></i> Dashboard</a>
             <a class="tablink" href="#" onclick="openPage('suiteMetrics', this, 'orange'); executeDataTable('#sm',5)"> <i class="fa fa-th-large"></i> Suite Metrics</a>
             <a class="tablink" href="#" onclick="openPage('testMetrics', this, 'orange'); executeDataTable('#tm',2)"> <i class="fa fa-list-alt"></i> Test Metrics</a>
@@ -432,7 +134,7 @@ def get_html_template():
             <div class="tabcontent" id="dashboard">
                 <div class="d-flex flex-column flex-md-row align-items-center p-1 mb-3 bg-light border-bottom shadow-sm">
                     <h5 class="my-0 mr-md-auto font-weight-normal"><i class="fa fa-dashboard"></i> Dashboard</h5>
-                    <nav class="my-2 my-md-0 mr-md-3" style="color:red"> <a class="p-2"><b style="color:black;">Execution Time:</b> __execution_time__ s</a>
+                    <nav class="my-2 my-md-0 mr-md-3" style="color:red"> <a class="p-2"><b style="color:black;">Execution Time:</b> 0.45 s</a>
                         <a class="p-2">
                             <button type="button" class="btn" data-toggle="modal" data-target="#myModal"><i class="fa fa-desktop"></i> View Info</button>
                             <!-- The Modal -->
@@ -451,19 +153,19 @@ def get_html_template():
                                                     </tr>
                                                     <tr>
                                                         <td>Executed By:</td>
-                                                        <td>__executed_by__</td>
+                                                        <td>DESKTOP-B8AFENN</td>
                                                     </tr>
                                                     <tr>
                                                         <td>OS Name:</td>
-                                                        <td>__os_name__</td>
+                                                        <td>Windows</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Python Version:</td>
-                                                        <td>__python_version__</td>
+                                                        <td>2.7.14</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Generated Time:</td>
-                                                        <td>__generated_date__</td>
+                                                        <td>Sep 14 2019, 18:22</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -479,16 +181,16 @@ def get_html_template():
                     </nav>
                 </div>
                 <div class="row">
-                    <div class="col-md-3"> <a class="tile tile-head">__total__<p style="font-size:12px">Total</p></a></div>
-                    <div class="col-md-3"> <a class="tile tile-info">__executed__<p style="font-size:12px">Executed</p></a></div>
-                    <div class="col-md-3"> <a class="tile tile-pass">__pass__<p style="font-size:12px">Pass</p></a></div>
-                    <div class="col-md-3"> <a class="tile tile-fail">__fail__<p style="font-size:12px">Fail</p></a></div>
+                    <div class="col-md-3"> <a class="tile tile-head">15<p style="font-size:12px">Total</p></a></div>
+                    <div class="col-md-3"> <a class="tile tile-info">13<p style="font-size:12px">Executed</p></a></div>
+                    <div class="col-md-3"> <a class="tile tile-pass">5<p style="font-size:12px">Pass</p></a></div>
+                    <div class="col-md-3"> <a class="tile tile-fail">6<p style="font-size:12px">Fail</p></a></div>
                 </div>
                 <div class="row">
-                    <div class="col-md-3"> <a class="tile tile-head">__skip__<p style="font-size:12px">Skip</p></a></div>
-                    <div class="col-md-3"> <a class="tile tile-info">__error__<p style="font-size:12px">Error</p></a></div>
-                    <div class="col-md-3"> <a class="tile tile-pass">__xpass__<p style="font-size:12px">xPass</p></a></div>
-                    <div class="col-md-3"> <a class="tile tile-fail">__xfail__<p style="font-size:12px">xFail</p></a></div>
+                    <div class="col-md-3"> <a class="tile tile-head">2<p style="font-size:12px">Skip</p></a></div>
+                    <div class="col-md-3"> <a class="tile tile-info">0<p style="font-size:12px">Error</p></a></div>
+                    <div class="col-md-3"> <a class="tile tile-pass">1<p style="font-size:12px">xPass</p></a></div>
+                    <div class="col-md-3"> <a class="tile tile-fail">1<p style="font-size:12px">xFail</p></a></div>
                 </div>
             
                 <hr/>
@@ -517,7 +219,7 @@ def get_html_template():
                         executeDataTable('#sm', 2);
                         executeDataTable('#tm', 3);
                         createBarGraph('#sm', 0, 2, 5, 'suiteBarID', 'Failure ', 'Suite');
-                        createPieChart(__pass__, __fail__, __xpass__, __xfail__, 'testChartID', 'Tests Status:');
+                        createPieChart(5, 6, 1, 1, 'testChartID', 'Tests Status:');
                         createBarGraph('#tm', 1, 3, 10, 'testsBarID', 'Elapsed Time (s) ', 'Test');
                     };
                 </script>
@@ -547,7 +249,57 @@ def get_html_template():
                         </tr>
                     </thead>
                     <tbody>
-                        __suite_metrics_row__
+                        
+        <tr>
+            <td style="width: 25%;">atest/test_fixture.py</td>
+            <td style="width: 10%; text-align:center;">1</td>
+            <td style="width: 10%; text-align:center;">2</td>
+            <td style="width: 10%; text-align:center;">0</td>
+            <td style="width: 10%; text-align:center;">0</td>
+            <td style="width: 10%; text-align:center;">0</td>
+            <td style="width: 10%; text-align:center;">0</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_mark.py</td>
+            <td style="width: 10%; text-align:center;">1</td>
+            <td style="width: 10%; text-align:center;">1</td>
+            <td style="width: 10%; text-align:center;">0</td>
+            <td style="width: 10%; text-align:center;">0</td>
+            <td style="width: 10%; text-align:center;">0</td>
+            <td style="width: 10%; text-align:center;">0</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_parameter.py</td>
+            <td style="width: 10%; text-align:center;">1</td>
+            <td style="width: 10%; text-align:center;">1</td>
+            <td style="width: 10%; text-align:center;">0</td>
+            <td style="width: 10%; text-align:center;">0</td>
+            <td style="width: 10%; text-align:center;">0</td>
+            <td style="width: 10%; text-align:center;">0</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_simple.py</td>
+            <td style="width: 10%; text-align:center;">1</td>
+            <td style="width: 10%; text-align:center;">1</td>
+            <td style="width: 10%; text-align:center;">0</td>
+            <td style="width: 10%; text-align:center;">0</td>
+            <td style="width: 10%; text-align:center;">0</td>
+            <td style="width: 10%; text-align:center;">0</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_xfail_skip.py</td>
+            <td style="width: 10%; text-align:center;">1</td>
+            <td style="width: 10%; text-align:center;">1</td>
+            <td style="width: 10%; text-align:center;">1</td>
+            <td style="width: 10%; text-align:center;">1</td>
+            <td style="width: 10%; text-align:center;">1</td>
+            <td style="width: 10%; text-align:center;">0</td>
+        </tr>
+    
                     </tbody>
                 </table>
                 <div class="row">
@@ -568,7 +320,127 @@ def get_html_template():
                     </tr>
                 </thead>
                 <tbody>
-                    __test_metrics_row__
+                    
+        <tr>
+            <td style="width: 25%;">atest/test_fixture.py</td>
+            <td style="width: 25%;">test_comparewithAA</td>
+            <td style="width: 10%; text-align:center;">FAIL</td>
+            <td style="width: 10%; text-align:center;">0.05</td>
+            <td style="width: 30%;">assert 25 == 35</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_fixture.py</td>
+            <td style="width: 25%;">test_comparewithBB</td>
+            <td style="width: 10%; text-align:center;">PASS</td>
+            <td style="width: 10%; text-align:center;">0.0</td>
+            <td style="width: 30%;"></td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_fixture.py</td>
+            <td style="width: 25%;">test_comparewithCC</td>
+            <td style="width: 10%; text-align:center;">FAIL</td>
+            <td style="width: 10%; text-align:center;">0.01</td>
+            <td style="width: 30%;">assert 45 == 35</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_mark.py</td>
+            <td style="width: 25%;">test_file1_method1</td>
+            <td style="width: 10%; text-align:center;">FAIL</td>
+            <td style="width: 10%; text-align:center;">0.01</td>
+            <td style="width: 30%;">assert 5 == 6</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_mark.py</td>
+            <td style="width: 25%;">test_file1_method2</td>
+            <td style="width: 10%; text-align:center;">PASS</td>
+            <td style="width: 10%; text-align:center;">0.0</td>
+            <td style="width: 30%;"></td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_parameter.py</td>
+            <td style="width: 25%;">test_add[5-5-10]</td>
+            <td style="width: 10%; text-align:center;">PASS</td>
+            <td style="width: 10%; text-align:center;">0.0</td>
+            <td style="width: 30%;"></td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_parameter.py</td>
+            <td style="width: 25%;">test_add[3-5-12]</td>
+            <td style="width: 10%; text-align:center;">FAIL</td>
+            <td style="width: 10%; text-align:center;">0.02</td>
+            <td style="width: 30%;">assert (3 + 5) == 12</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_simple.py</td>
+            <td style="width: 25%;">test_file2_method1</td>
+            <td style="width: 10%; text-align:center;">FAIL</td>
+            <td style="width: 10%; text-align:center;">0.01</td>
+            <td style="width: 30%;">assert 5 == 6</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_simple.py</td>
+            <td style="width: 25%;">test_file2_method2</td>
+            <td style="width: 10%; text-align:center;">PASS</td>
+            <td style="width: 10%; text-align:center;">0.0</td>
+            <td style="width: 30%;"></td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_xfail_skip.py</td>
+            <td style="width: 25%;">test_add_1</td>
+            <td style="width: 10%; text-align:center;">SKIP</td>
+            <td style="width: 10%; text-align:center;">0.01</td>
+            <td style="width: 30%;">('atest\\test_xfail_skip.py', 2, u'Skipped: unconditional skip')</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_xfail_skip.py</td>
+            <td style="width: 25%;">test_add_2</td>
+            <td style="width: 10%; text-align:center;">SKIP</td>
+            <td style="width: 10%; text-align:center;">0.02</td>
+            <td style="width: 30%;">('atest\\test_xfail_skip.py', 6, u'Skipped: unconditional skip')</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_xfail_skip.py</td>
+            <td style="width: 25%;">test_add_3</td>
+            <td style="width: 10%; text-align:center;">xPASS</td>
+            <td style="width: 10%; text-align:center;">0.0</td>
+            <td style="width: 30%;"></td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_xfail_skip.py</td>
+            <td style="width: 25%;">test_add_4</td>
+            <td style="width: 10%; text-align:center;">xFAIL</td>
+            <td style="width: 10%; text-align:center;">0.01</td>
+            <td style="width: 30%;">assert (15 + 13) == 100</td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_xfail_skip.py</td>
+            <td style="width: 25%;">test_add_5</td>
+            <td style="width: 10%; text-align:center;">PASS</td>
+            <td style="width: 10%; text-align:center;">0.0</td>
+            <td style="width: 30%;"></td>
+        </tr>
+    
+        <tr>
+            <td style="width: 25%;">atest/test_xfail_skip.py</td>
+            <td style="width: 25%;">test_add_6</td>
+            <td style="width: 10%; text-align:center;">FAIL</td>
+            <td style="width: 10%; text-align:center;">0.01</td>
+            <td style="width: 30%;">assert (3 + 2) == 6</td>
+        </tr>
+    
                 </tbody>
             </table>
             <div class="row">
@@ -637,7 +509,7 @@ Content-Type: text/html
                     <h2>Pytest Report</h2>
                 </td>
                 <td style="text-align:right; padding-right:10px;color:#0b6690;">
-                    <h3>Duration (s): __execution_time__</h3>
+                    <h3>Duration (s): 0.45</h3>
                 </td>
             </tr>
         </tbody>
@@ -654,7 +526,7 @@ Content-Type: text/html
                 <table style="width:100%;">
                     <tbody>
                         <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__total__</td>
+                            <td style="text-align:center; color:white;font-size: 32px;">15</td>
                         </tr>
                         <tr>
                             <td style="text-align:center; color:white;font-size: 14px;">Total</td>
@@ -666,7 +538,7 @@ Content-Type: text/html
                 <table style="width:100%;">
                     <tbody>
                         <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__executed__</td>
+                            <td style="text-align:center; color:white;font-size: 32px;">13</td>
                         </tr>
                         <tr>
                             <td style="text-align:center; color:white;font-size: 14px;">Executed</td>
@@ -678,7 +550,7 @@ Content-Type: text/html
                 <table style="width:100%;">
                     <tbody>
                         <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__pass__</td>
+                            <td style="text-align:center; color:white;font-size: 32px;">5</td>
                         </tr>
                         <tr>
                             <td style="text-align:center; color:white;font-size: 14px;">Pass</td>
@@ -690,7 +562,7 @@ Content-Type: text/html
                 <table style="width:100%;">
                     <tbody>
                         <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__fail__</td>
+                            <td style="text-align:center; color:white;font-size: 32px;">6</td>
                         </tr>
                         <tr>
                             <td style="text-align:center; color:white;font-size: 14px;">Fail</td>
@@ -704,7 +576,7 @@ Content-Type: text/html
                 <table style="width:100%;">
                     <tbody>
                         <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__skip__</td>
+                            <td style="text-align:center; color:white;font-size: 32px;">2</td>
                         </tr>
                         <tr>
                             <td style="text-align:center; color:white;font-size: 14px;">Skip</td>
@@ -716,7 +588,7 @@ Content-Type: text/html
                 <table style="width:100%;">
                     <tbody>
                         <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__error__</td>
+                            <td style="text-align:center; color:white;font-size: 32px;">0</td>
                         </tr>
                         <tr>
                             <td style="text-align:center; color:white;font-size: 14px;">Error</td>
@@ -728,7 +600,7 @@ Content-Type: text/html
                 <table style="width:100%;">
                     <tbody>
                         <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__xpass__</td>
+                            <td style="text-align:center; color:white;font-size: 32px;">1</td>
                         </tr>
                         <tr>
                             <td style="text-align:center; color:white;font-size: 14px;">xPass</td>
@@ -740,7 +612,7 @@ Content-Type: text/html
                 <table style="width:100%;">
                     <tbody>
                         <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__xfail__</td>
+                            <td style="text-align:center; color:white;font-size: 32px;">1</td>
                         </tr>
                         <tr>
                             <td style="text-align:center; color:white;font-size: 14px;">Fail</td>
@@ -952,6 +824,4 @@ Content-Type: text/html
             });
         </script>
     </body>
-	"""
-
-	return my_template
+	

@@ -1,7 +1,7 @@
-# pytest-metrics (in development)
+# pytest-metrics
 
 
-Plugin to create dashboard view report for pytest.
+Plugin to create dashboard view report for pytest (no code changes)
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)]()
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)]()
@@ -9,10 +9,31 @@ Plugin to create dashboard view report for pytest.
 
 ---
 
+Sample Report - [link](http://pytest-metrics.netlify.com)
+> Best viewed in desktop
+
+Sample Screenshot:
+
+
+
+---
+
+### Why Pytest-Metrics
+
+ - Dashboard view of results
+ - Suite/Class level statisitics
+ - Search and Pagination of results
+ - Export results to csv, excel and can save as pdf
+ - Easy to share results
+ - Free to use
+
+---
+
 ### How it works:
 
- - Get execution details using `hooks`
- - Build html template
+ - Get execution details using `hooks` [link](https://docs.pytest.org/en/latest/_modules/_pytest/hookspec.html)
+ - Create pytest-metrics report &
+ - Saves in current folder
 
 ---
 
@@ -30,9 +51,22 @@ Plugin to create dashboard view report for pytest.
    pip install git+https://github.com/adiralashiva8/pytest-metrics
    ```
 
+2. Enable `metrics-report` while executing tests
+    ```
+    pytest --menable=True
+    ```
+    > Default value of `--menable` is `False` 
+
+3. Report with created after execution
+
+**Note:** Users can customize logo by using following command
+    ```
+    pytest --menable=True --mlogo="mycompanylogo.png"
+    ```
+
 ---
 
-*Thanks for using pytest-email!*
+*Thanks for using pytest-metrics!*
 
 If you have any questions / suggestions / comments on this, please feel free to reach me at
 
@@ -42,11 +76,19 @@ If you have any questions / suggestions / comments on this, please feel free to 
 
 ---
 
+Found issue report [here](https://github.com/adiralashiva8/pytest-metrics/issues)
+
+---
+
 *Credits*
 
  - [Pytest-dev](https://github.com/pytest-dev)
  - [Stackoverflow](https://stackoverflow.com/questions/tagged/pytest)
+ - [Datatable](https://datatables.net)
+ - [pytest-community]()
 
 ---
 
  :star: repo if you like it
+
+ > Inspired from [robotframework-metrics](https://github.com/adiralashiva8/robotframework-metrics)
