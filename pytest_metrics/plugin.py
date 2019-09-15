@@ -496,7 +496,7 @@ def get_html_template():
                     <div class="col-md-4" style="background-color:white;height:350px;width:auto;border:groove;"> <span style="font-weight:bold">Test Status:</span>
                         <div id="testChartID" style="height:280px;width:auto;"></div>
                     </div>
-                    <div class="col-md-8" style="background-color:white;height:350px;width:auto;border:groove;"> <span style="font-weight:bold">Top 5 Suite Performance (sec):</span>
+                    <div class="col-md-8" style="background-color:white;height:350px;width:auto;border:groove;"> <span style="font-weight:bold">Top 5 Suite Failures:</span>
                         <div id="suiteBarID" style="height:300px;width:auto;"></div>
                     </div>
                 </div>
