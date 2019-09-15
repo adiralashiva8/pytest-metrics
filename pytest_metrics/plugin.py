@@ -47,7 +47,7 @@ def pytest_addoption(parser):
         '--mlogo',
         action='store',
         dest='mlogo',
-        default="https://i.ibb.co/RQSJvLB/Shiva-Pytest-Trans.png",
+        default="https://i.ibb.co/k4YktNP/testingfox.jpg",
         help='Logo to use in metrics report'
     )
 
@@ -422,7 +422,7 @@ def get_html_template():
     <body>
         <div class="loader"></div>
         <div class="sidenav">
-            <a><img src="__custom_logo__" style="height:20vh;max-width:98%;" /></a>
+            <a><img src="__custom_logo__" style="height:25vh;max-width:98%;" /></a>
             <a class="tablink" href="#" id="defaultOpen" onclick="openPage('dashboard', this, 'orange')"> <i class="fa fa-dashboard"></i> Dashboard</a>
             <a class="tablink" href="#" onclick="openPage('suiteMetrics', this, 'orange'); executeDataTable('#sm',5)"> <i class="fa fa-th-large"></i> Suite Metrics</a>
             <a class="tablink" href="#" onclick="openPage('testMetrics', this, 'orange'); executeDataTable('#tm',2)"> <i class="fa fa-list-alt"></i> Test Metrics</a>
