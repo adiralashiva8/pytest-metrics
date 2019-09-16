@@ -47,7 +47,7 @@ def pytest_addoption(parser):
         '--mlogo',
         action='store',
         dest='mlogo',
-        default="https://i.ibb.co/k4YktNP/testingfox.jpg",
+        default="https://i.ibb.co/9qBkwDF/Testing-Fox-Logo.png",
         help='Logo to use in metrics report'
     )
 
