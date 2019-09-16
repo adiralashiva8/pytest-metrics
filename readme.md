@@ -3,6 +3,8 @@
 
 Plugin to create dashboard view report for pytest (no code changes)
 
+[![PyPI version](https://badge.fury.io/py/pytest-metrics.svg)](https://badge.fury.io/py/pytest-metrics)
+[![Downloads](https://pepy.tech/badge/pytest-metrics)](https://pepy.tech/project/pytest-metrics)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)]()
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)]()
 [![Open Source Love png1](https://badges.frapsoft.com/os/v1/open-source.png?v=103)]()
@@ -37,12 +39,17 @@ Sample Report - [link](http://pytest-metrics.netlify.com)
 
 1. Install `pytest-metrics`
    
-   > Case 1: Using `setup.py` (clone repo and run command in root)
+   > Case 1: Using pip
+   ```
+   pip install pytest-metrics
+   ```
+   
+   > Case 2: Using `setup.py` (clone repo and run command in root)
    ```
    python setup.py install
    ```
 
-   > Case 2: Install from git (changes in master)
+   > Case 3: Install from git (changes in master)
    ```
    pip install git+https://github.com/adiralashiva8/pytest-metrics
    ```
