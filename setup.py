@@ -28,7 +28,7 @@ setup(
     packages=find_packages(include=['pytest_metrics']),
     setup_requires=setup_requirements,
     url='https://github.com/adiralashiva8/pytest-metrics',
-    version='0.1',
+    version='0.2',
     zip_safe=True,
     install_requires=[
         'pytest',

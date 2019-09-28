@@ -155,7 +155,8 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
         _executed = _pass + _fail + _xpass + _xfail
 
         # create live logs report and close
-        live_logs_file = open('pytest_metrics.html','w')
+        report_file_name = "pytest_metrics_" + str(datetime.datetime.now().strftime("%b_%d_%Y_%H_%M")) + ".html"
+        live_logs_file = open(report_file_name,'w')
         message = get_updated_template_text(str(config.option.mlogo))
         live_logs_file.write(message)
         live_logs_file.close()
