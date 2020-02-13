@@ -65,7 +65,7 @@ Sample Report - [link](http://pytest-metrics.netlify.com)
 **Note:** Users can customize logo by using following command
 
 ```
-pytest --menable=True --mlogo="mycompanylogo.png"
+pytest --menable=True --mlogo="https://www.mycompany/logo.png"
 ```
 
 ---
