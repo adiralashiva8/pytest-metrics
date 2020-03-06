@@ -124,7 +124,7 @@
     <body>
         <div class="loader"></div>
         <div class="sidenav">
-            <a><img src="https://i.ibb.co/k4YktNP/testingfox.jpg" style="height:25vh;max-width:98%;" /></a>
+            <a><img src="https://i.ibb.co/9qBkwDF/Testing-Fox-Logo.png" style="height:25vh;max-width:98%;" /></a>
             <a class="tablink" href="#" id="defaultOpen" onclick="openPage('dashboard', this, 'orange')"> <i class="fa fa-dashboard"></i> Dashboard</a>
             <a class="tablink" href="#" onclick="openPage('suiteMetrics', this, 'orange'); executeDataTable('#sm',5)"> <i class="fa fa-th-large"></i> Suite Metrics</a>
             <a class="tablink" href="#" onclick="openPage('testMetrics', this, 'orange'); executeDataTable('#tm',2)"> <i class="fa fa-list-alt"></i> Test Metrics</a>
@@ -134,7 +134,7 @@
             <div class="tabcontent" id="dashboard">
                 <div class="d-flex flex-column flex-md-row align-items-center p-1 mb-3 bg-light border-bottom shadow-sm">
                     <h5 class="my-0 mr-md-auto font-weight-normal"><i class="fa fa-dashboard"></i> Dashboard</h5>
-                    <nav class="my-2 my-md-0 mr-md-3" style="color:red"> <a class="p-2"><b style="color:black;">Execution Time:</b> 0.45 s</a>
+                    <nav class="my-2 my-md-0 mr-md-3" style="color:red"> <a class="p-2"><b style="color:black;">Execution Time:</b> 0.25 s</a>
                         <a class="p-2">
                             <button type="button" class="btn" data-toggle="modal" data-target="#myModal"><i class="fa fa-desktop"></i> View Info</button>
                             <!-- The Modal -->
@@ -153,7 +153,7 @@
                                                     </tr>
                                                     <tr>
                                                         <td>Executed By:</td>
-                                                        <td>DESKTOP-B8AFENN</td>
+                                                        <td>CITHYDLTP-032</td>
                                                     </tr>
                                                     <tr>
                                                         <td>OS Name:</td>
@@ -161,11 +161,11 @@
                                                     </tr>
                                                     <tr>
                                                         <td>Python Version:</td>
-                                                        <td>2.7.14</td>
+                                                        <td>3.7.0</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Generated Time:</td>
-                                                        <td>Sep 14 2019, 18:22</td>
+                                                        <td>Mar 06 2020, 18:08</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -198,7 +198,7 @@
                     <div class="col-md-4" style="background-color:white;height:350px;width:auto;border:groove;"> <span style="font-weight:bold">Test Status:</span>
                         <div id="testChartID" style="height:280px;width:auto;"></div>
                     </div>
-                    <div class="col-md-8" style="background-color:white;height:350px;width:auto;border:groove;"> <span style="font-weight:bold">Top 5 Suite Performance (sec):</span>
+                    <div class="col-md-8" style="background-color:white;height:350px;width:auto;border:groove;"> <span style="font-weight:bold">Top 5 Suite Failures:</span>
                         <div id="suiteBarID" style="height:300px;width:auto;"></div>
                     </div>
                 </div>
@@ -325,7 +325,7 @@
             <td style="width: 25%;">atest/test_fixture.py</td>
             <td style="width: 25%;">test_comparewithAA</td>
             <td style="width: 10%; text-align:center;">FAIL</td>
-            <td style="width: 10%; text-align:center;">0.05</td>
+            <td style="width: 10%; text-align:center;">0.07</td>
             <td style="width: 30%;">assert 25 == 35</td>
         </tr>
     
@@ -341,7 +341,7 @@
             <td style="width: 25%;">atest/test_fixture.py</td>
             <td style="width: 25%;">test_comparewithCC</td>
             <td style="width: 10%; text-align:center;">FAIL</td>
-            <td style="width: 10%; text-align:center;">0.01</td>
+            <td style="width: 10%; text-align:center;">0.0</td>
             <td style="width: 30%;">assert 45 == 35</td>
         </tr>
     
@@ -349,7 +349,7 @@
             <td style="width: 25%;">atest/test_mark.py</td>
             <td style="width: 25%;">test_file1_method1</td>
             <td style="width: 10%; text-align:center;">FAIL</td>
-            <td style="width: 10%; text-align:center;">0.01</td>
+            <td style="width: 10%; text-align:center;">0.0</td>
             <td style="width: 30%;">assert 5 == 6</td>
         </tr>
     
@@ -373,7 +373,7 @@
             <td style="width: 25%;">atest/test_parameter.py</td>
             <td style="width: 25%;">test_add[3-5-12]</td>
             <td style="width: 10%; text-align:center;">FAIL</td>
-            <td style="width: 10%; text-align:center;">0.02</td>
+            <td style="width: 10%; text-align:center;">0.0</td>
             <td style="width: 30%;">assert (3 + 5) == 12</td>
         </tr>
     
@@ -381,7 +381,7 @@
             <td style="width: 25%;">atest/test_simple.py</td>
             <td style="width: 25%;">test_file2_method1</td>
             <td style="width: 10%; text-align:center;">FAIL</td>
-            <td style="width: 10%; text-align:center;">0.01</td>
+            <td style="width: 10%; text-align:center;">0.0</td>
             <td style="width: 30%;">assert 5 == 6</td>
         </tr>
     
@@ -398,15 +398,15 @@
             <td style="width: 25%;">test_add_1</td>
             <td style="width: 10%; text-align:center;">SKIP</td>
             <td style="width: 10%; text-align:center;">0.01</td>
-            <td style="width: 30%;">('atest\\test_xfail_skip.py', 2, u'Skipped: unconditional skip')</td>
+            <td style="width: 30%;">('atest\\test_xfail_skip.py', 3, 'Skipped: unconditional skip')</td>
         </tr>
     
         <tr>
             <td style="width: 25%;">atest/test_xfail_skip.py</td>
             <td style="width: 25%;">test_add_2</td>
             <td style="width: 10%; text-align:center;">SKIP</td>
-            <td style="width: 10%; text-align:center;">0.02</td>
-            <td style="width: 30%;">('atest\\test_xfail_skip.py', 6, u'Skipped: unconditional skip')</td>
+            <td style="width: 10%; text-align:center;">0.01</td>
+            <td style="width: 30%;">('atest\\test_xfail_skip.py', 7, 'Skipped: unconditional skip')</td>
         </tr>
     
         <tr>
@@ -437,7 +437,7 @@
             <td style="width: 25%;">atest/test_xfail_skip.py</td>
             <td style="width: 25%;">test_add_6</td>
             <td style="width: 10%; text-align:center;">FAIL</td>
-            <td style="width: 10%; text-align:center;">0.01</td>
+            <td style="width: 10%; text-align:center;">0.0</td>
             <td style="width: 30%;">assert (3 + 2) == 6</td>
         </tr>
     
@@ -509,7 +509,7 @@ Content-Type: text/html
                     <h2>Pytest Report</h2>
                 </td>
                 <td style="text-align:right; padding-right:10px;color:#0b6690;">
-                    <h3>Duration (s): 0.45</h3>
+                    <h3>Duration (s): 0.25</h3>
                 </td>
             </tr>
         </tbody>

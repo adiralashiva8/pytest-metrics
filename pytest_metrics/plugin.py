@@ -50,6 +50,13 @@ def pytest_addoption(parser):
         default="https://i.ibb.co/9qBkwDF/Testing-Fox-Logo.png",
         help='Logo to use in metrics report'
     )
+    group.addoption(
+        '--mtimestamp',
+        action='store',
+        dest='mtimestamp',
+        default="False",
+        help='Append timestamp to metrics report'
+    )
 
 def pytest_runtest_setup(item):
     global _test_start_time
@@ -66,14 +73,14 @@ def pytest_runtest_makereport(item, call):
     if _initial_trigger :
         update_previous_suite_name()
         set_initial_trigger()
-    
+
     if str(_previous_suite_name) != str(_suite_name):
         append_suite_metrics_row(_previous_suite_name)
         update_previous_suite_name()
         reset_counts()
     else:
         update_counts(rep)
-    
+
     if rep.when == "call" and rep.passed:
         if hasattr(rep, "wasxfail"):
             increment_xpass()
@@ -84,7 +91,7 @@ def pytest_runtest_makereport(item, call):
             increment_pass()
             update_test_status("PASS")
             update_test_error("")
-    
+
     if rep.failed:
         if getattr(rep, "when", None) == "call":
             if hasattr(rep, "wasxfail"):
@@ -105,7 +112,7 @@ def pytest_runtest_makereport(item, call):
             if rep.longrepr:
                 for line in rep.longreprtext.splitlines():
                     update_test_error(line)
-    
+
     if rep.skipped:
         if hasattr(rep, "wasxfail"):
             increment_xfail()
@@ -121,7 +128,7 @@ def pytest_runtest_makereport(item, call):
             if rep.longrepr:
                 for line in rep.longreprtext.splitlines():
                     update_test_error(line)
-        
+
 def pytest_runtest_teardown(item, nextitem):
 
     _test_end_time = time.time()
@@ -130,7 +137,12 @@ def pytest_runtest_teardown(item, nextitem):
     _test_name = item.name
 
     global _duration
-    _duration = _test_end_time - _test_start_time
+    try:
+        _duration = _test_end_time - _test_start_time
+    except Exception as e:
+        print(e)
+        _duration = 0
+    # _duration = _test_end_time - _test_start_time
 
     # create list to save content
     append_test_metrics_row()
@@ -138,7 +150,7 @@ def pytest_runtest_teardown(item, nextitem):
 def pytest_sessionfinish(session):
     append_suite_metrics_row(_suite_name)
     reset_counts()
-    
+
 @pytest.hookimpl(hookwrapper=True)
 def pytest_terminal_summary(terminalreporter, exitstatus, config):
     yield
@@ -147,7 +159,7 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
 
         global _excution_time
         _excution_time = time.time() - terminalreporter._sessionstarttime
-        
+
         global _total
         _total =  _pass + _fail + _xpass + _xfail + _skip + _error
 
@@ -155,7 +167,10 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
         _executed = _pass + _fail + _xpass + _xfail
 
         # create live logs report and close
-        report_file_name = "pytest_metrics_" + str(datetime.datetime.now().strftime("%b_%d_%Y_%H_%M")) + ".html"
+        if config.option.mtimestamp == "True":
+            report_file_name = "pytest_metrics_" + str(datetime.datetime.now().strftime("%b_%d_%Y_%H_%M")) + ".html"
+        else:
+            report_file_name = "pytest_metrics.html"
         live_logs_file = open(report_file_name,'w')
         message = get_updated_template_text(str(config.option.mlogo))
         live_logs_file.write(message)

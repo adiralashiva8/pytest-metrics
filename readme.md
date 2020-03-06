@@ -58,15 +58,23 @@ Sample Report - [link](http://pytest-metrics.netlify.com)
     ```
     pytest --menable=True
     ```
-    > Default value of `--menable` is `False` 
+    > Default value of `--menable` is `False`
 
 3. Report with created after execution
 
-**Note:** Users can customize logo by using following command
 
-```
-pytest --menable=True --mlogo="https://www.mycompany/logo.png"
-```
+**Note:** 
+
+ - Customize logo by using following command
+
+    ```
+    pytest --menable=True --mlogo="https://www.mycompany/logo.png"
+    ```
+ - Append timestamp to metrics report
+
+    ```
+    pytest --menable=True --mtimestamp=True
+    ```
 
 ---
 
