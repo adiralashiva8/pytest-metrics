@@ -103,6 +103,14 @@ Found issue report [here](https://github.com/adiralashiva8/pytest-metrics/issues
 *Pytest-metrics* uses above items to create report
 
 ---
+*Special Thanks To*
+
+
+*Feedback & Suggestions*
+
+ - [Rahul Parwal](https://www.linkedin.com/in/rahul-parwal/)
+
+---
 
  :star: repo if you like it
 
