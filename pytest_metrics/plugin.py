@@ -179,13 +179,13 @@ def pytest_terminal_summary(terminalreporter, exitstatus, config):
 def append_suite_metrics_row(name):
     suite_row_text = """
         <tr>
-            <td style="width: 25%;">__sname__</td>
-            <td style="width: 10%; text-align:center;">__spass__</td>
-            <td style="width: 10%; text-align:center;">__sfail__</td>
-            <td style="width: 10%; text-align:center;">__sskip__</td>
-            <td style="width: 10%; text-align:center;">__sxpass__</td>
-            <td style="width: 10%; text-align:center;">__sxfail__</td>
-            <td style="width: 10%; text-align:center;">__serror__</td>
+            <td style="word-wrap: break-word;max-width: 200px; white-space: normal; text-align:left">__sname__</td>
+            <td>__spass__</td>
+            <td>__sfail__</td>
+            <td>__sskip__</td>
+            <td>__sxpass__</td>
+            <td>__sxfail__</td>
+            <td>__serror__</td>
         </tr>
     """
     suite_row_text = suite_row_text.replace("__sname__",str(name))
@@ -202,11 +202,11 @@ def append_suite_metrics_row(name):
 def append_test_metrics_row():
     test_row_text = """
         <tr>
-            <td style="width: 25%;">__sname__</td>
-            <td style="width: 25%;">__name__</td>
-            <td style="width: 10%; text-align:center;">__stat__</td>
-            <td style="width: 10%; text-align:center;">__dur__</td>
-            <td style="width: 30%;">__msg__</td>
+            <td style="word-wrap: break-word;max-width: 200px; white-space: normal; text-align:left">__sname__</td>
+            <td style="word-wrap: break-word;max-width: 200px; white-space: normal; text-align:left">__name__</td>
+            <td>__stat__</td>
+            <td>__dur__</td>
+            <td style="word-wrap: break-word;max-width: 200px; white-space: normal; text-align:left"">__msg__</td>
         </tr>
     """
     test_row_text = test_row_text.replace("__sname__",str(_suite_name))
@@ -222,16 +222,16 @@ def get_updated_template_text(logo_url):
     template_text = get_html_template()
     template_text = template_text.replace("__custom_logo__", logo_url)
     template_text = template_text.replace("__execution_time__", str(round(_excution_time, 2)))
-    template_text = template_text.replace("__executed_by__", str(platform.uname()[1]))
-    template_text = template_text.replace("__os_name__", str(platform.uname()[0]))
-    template_text = template_text.replace("__python_version__", str(sys.version.split(' ')[0]))
-    template_text = template_text.replace("__generated_date__", str(datetime.datetime.now().strftime("%b %d %Y, %H:%M")))
+    # template_text = template_text.replace("__executed_by__", str(platform.uname()[1]))
+    # template_text = template_text.replace("__os_name__", str(platform.uname()[0]))
+    # template_text = template_text.replace("__python_version__", str(sys.version.split(' ')[0]))
+    # template_text = template_text.replace("__generated_date__", str(datetime.datetime.now().strftime("%b %d %Y, %H:%M")))
     template_text = template_text.replace("__total__", str(_total))
     template_text = template_text.replace("__executed__", str(_executed))
     template_text = template_text.replace("__pass__", str(_pass))
     template_text = template_text.replace("__fail__", str(_fail))
     template_text = template_text.replace("__skip__", str(_skip))
-    template_text = template_text.replace("__error__", str(_error))
+    # template_text = template_text.replace("__error__", str(_error))
     template_text = template_text.replace("__xpass__", str(_xpass))
     template_text = template_text.replace("__xfail__", str(_xfail))
     template_text = template_text.replace("__suite_metrics_row__", str(_suite_metrics_content))
@@ -324,47 +324,36 @@ def get_html_template():
         <link href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" rel="stylesheet" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" />
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" />
-        <script src="https://code.jquery.com/jquery-3.3.1.js" type="text/javascript">
-        </script>
+        <script src="https://code.jquery.com/jquery-3.3.1.js" type="text/javascript"></script>
         <!-- Bootstrap core Googleccharts -->
-        <script src="https://www.gstatic.com/charts/loader.js" type="text/javascript">
-        </script>
+        <script src="https://www.gstatic.com/charts/loader.js" type="text/javascript"></script>
         <script type="text/javascript">
             google.charts.load('current', {
-                        packages: ['corechart']
-                    });
+                packages: ['corechart']
+            });
         </script>
         <!-- Bootstrap core Datatable-->
-        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript">
-        </script>
-        <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js" type="text/javascript">
-        </script>
-        <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.flash.min.js" type="text/javascript">
-        </script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript">
-        </script>
-        <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js" type="text/javascript">
-        </script>
-        <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js" type="text/javascript">
-        </script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js" type="text/javascript"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.colVis.min.js" type="text/javascript"></script>
         <style>
             body {
                 font-family: -apple-system, sans-serif;
+                background-color: #eeeeee;
             }
-                    
             .sidenav {
                 height: 100%;
-                width: 220px;
+                width: 240px;
                 position: fixed;
                 z-index: 1;
                 top: 0;
                 left: 0;
                 background-color: white;
                 overflow-x: hidden;
-                border-style: ridge;
             }
-            
             .sidenav a {
                 padding: 12px 10px 8px 12px;
                 text-decoration: none;
@@ -372,11 +361,9 @@ def get_html_template():
                 color: Black;
                 display: block;
             }
-            
             .main {
                 padding-top: 10px;
             }
-            
             @media screen and (max-height: 450px) {
                 .sidenav {
                     padding-top: 15px;
@@ -385,42 +372,34 @@ def get_html_template():
                     font-size: 18px;
                 }
             }
-            
-            .tile {
-                width: 100%;
-                float: left;
-                margin: 0px;
-                list-style: none;
-                font-size: 30px;
-                color: #FFF;
-                -moz-border-radius: 5px;
-                -webkit-border-radius: 5px;
-                margin-bottom: 5px;
-                position: relative;
-                text-align: center;
-                color: white!important;
+            .wrimagecard {
+                margin-top: 0;
+                margin-bottom: 0.6rem;
+                border-radius: 10px;
+                transition: all 0.3s ease;
+                background-color: #f8f9fa;
             }
-            
-            .tile.tile-fail {
-                background: #f44336!important;
+            .rowcard {
+                padding-top: 10px;
+                box-shadow: 12px 15px 20px 0px rgba(46, 61, 73, 0.15);
+                border-radius: 15px;
+                transition: all 0.3s ease;
+                background-color: white;
             }
-            
-            .tile.tile-pass {
-                background: #4CAF50!important;
+            .tablecard {
+                background-color: white;
+                font-size: 15px;
             }
-            
-            .tile.tile-info {
-                background: #009688!important;
+            tr {
+                height: 40px;
             }
-            
-            .tile.tile-head {
-                background: #616161!important;
-            }
-            
             .dt-buttons {
                 margin-left: 5px;
             }
-            
+            th, td, tr {
+                text-align:center;
+                vertical-align: middle;
+            }
             .loader {
                 position: fixed;
                 left: 0px;
@@ -428,7 +407,7 @@ def get_html_template():
                 width: 100%;
                 height: 100%;
                 z-index: 9999;
-                background: url('https://www.downgraf.com/wp-content/uploads/2014/09/02-loading-blossom-2x.gif') 50% 50% no-repeat rgb(249, 249, 249);
+                background: url('https://i.ibb.co/cXnKsNR/Cube-1s-200px.gif') 50% 50% no-repeat rgb(249, 249, 249);
             }
         </style>
     </head>
@@ -438,92 +417,137 @@ def get_html_template():
     <body>
         <div class="loader"></div>
         <div class="sidenav">
-            <a><img src="__custom_logo__" style="height:25vh;max-width:98%;" /></a>
-            <a class="tablink" href="#" id="defaultOpen" onclick="openPage('dashboard', this, 'orange')"> <i class="fa fa-dashboard"></i> Dashboard</a>
-            <a class="tablink" href="#" onclick="openPage('suiteMetrics', this, 'orange'); executeDataTable('#sm',5)"> <i class="fa fa-th-large"></i> Suite Metrics</a>
-            <a class="tablink" href="#" onclick="openPage('testMetrics', this, 'orange'); executeDataTable('#tm',2)"> <i class="fa fa-list-alt"></i> Test Metrics</a>
-            <a class="tablink" href="#" onclick="openPage('statistics', this, 'orange');"> <i class="fa fa-envelope-o"></i> Email</a>
+            <a><img class="wrimagecard" src="__custom_logo__" style="height:20vh;max-width:98%;" /></a>
+            <a class="tablink" href="#" id="defaultOpen" onclick="openPage('dashboard', this, '#fc6666')">
+                <i class="fa fa-dashboard" style="color:CORNFLOWERBLUE"></i> Dashboard</a>
+            <a class="tablink" href="#" onclick="openPage('suiteMetrics', this, '#fc6666'); executeDataTable('#sm',2)">
+                <i class="fa fa-th-large" style="color:CADETBLUE"></i> Suite Metrics</a>
+            <a class="tablink" href="#" onclick="openPage('testMetrics', this, '#fc6666'); executeDataTable('#tm',3)">
+                <i class="fa fa-list-alt" style="color:PALEVIOLETRED"></i> Test Metrics</a>
         </div>
         <div class="main col-md-9 ml-sm-auto col-lg-10 px-4">
             <div class="tabcontent" id="dashboard">
-                <div class="d-flex flex-column flex-md-row align-items-center p-1 mb-3 bg-light border-bottom shadow-sm">
+                <div class="d-flex flex-column flex-md-row align-items-center p-1 mb-3 bg-light border-bottom shadow-sm rowcard">
                     <h5 class="my-0 mr-md-auto font-weight-normal"><i class="fa fa-dashboard"></i> Dashboard</h5>
-                    <nav class="my-2 my-md-0 mr-md-3" style="color:red"> <a class="p-2"><b style="color:black;">Execution Time:</b> __execution_time__ s</a>
-                        <a class="p-2">
-                            <button type="button" class="btn" data-toggle="modal" data-target="#myModal"><i class="fa fa-desktop"></i> View Info</button>
-                            <!-- The Modal -->
-                            <div class="modal" id="myModal">
-                                <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <!-- Modal Header -->
-                                        <div class="modal-header">
-                                            <h4 class="modal-title">Execution Info</h4>
-                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        </div>
-                                        <!-- Modal body -->
-                                        <div class="modal-body">
-                                            <table class="table">
-                                                <tbody>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Executed By:</td>
-                                                        <td>__executed_by__</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>OS Name:</td>
-                                                        <td>__os_name__</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Python Version:</td>
-                                                        <td>__python_version__</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Generated Time:</td>
-                                                        <td>__generated_date__</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <!-- Modal footer -->
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
+                    <nav class="my-2 my-md-0 mr-md-3" style="color:red">
+                        <a class="p-2"><b style="color:black;">Execution Time:</b> __execution_time__ s</a>
                     </nav>
                 </div>
-                <div class="row">
-                    <div class="col-md-3"> <a class="tile tile-head">__total__<p style="font-size:12px">Total</p></a></div>
-                    <div class="col-md-3"> <a class="tile tile-info">__executed__<p style="font-size:12px">Executed</p></a></div>
-                    <div class="col-md-3"> <a class="tile tile-pass">__pass__<p style="font-size:12px">Pass</p></a></div>
-                    <div class="col-md-3"> <a class="tile tile-fail">__fail__<p style="font-size:12px">Fail</p></a></div>
+
+                <div class="row rowcard">
+                    <div class="col-md-4 border-right">
+                        <table style="width:100%;height:200px;text-align: center;">
+                            <tbody>
+                                <tr style="height:60%">
+                                    <td>
+                                        <table style="width:100%">
+                                            <tbody>
+                                                <tr style="height:100%">
+                                                    <td style="font-size:60px; color:rgb(105, 135, 219)">__total__</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span style="color: #999999;font-size:12px">Total</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr style="height:25%">
+                                    <td>
+                                        <table style="width:100%">
+                                            <tbody>
+                                                <tr align="center" style="height:70%;font-size:25px" valign="middle">
+                                                    <td style="width: 33%; color:rgb(17, 3, 3)">__executed__</td>
+                                                    <td style="width: 33%; color:#96a74c">__skip__</td>
+                                                </tr>
+                                                <tr align="center" style="height:30%" valign="top">
+                                                    <td style="width: 33%">
+                                                        <span style="color: #999999;font-size:10px">Executed</span>
+                                                    </td>
+                                                    <td style="width: 33%">
+                                                        <span style="color: #999999;font-size:10px">Skip</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4 borders" data-toggle="tooltip">
+                        <table style="width:100%;height:200px;text-align: center;">
+                            <tbody>
+                                <tr style="height:100%">
+                                    <td>
+                                        <table style="width:100%">
+                                            <tbody>
+                                                <tr style="height:100%">
+                                                    <td style="font-size:60px; color:#2ecc71">__pass__</td>
+                                                    <td style="font-size:60px; color:#fc6666">__fail__</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span style="color: #999999;font-size:12px">Pass</span>
+                                                    </td>
+                                                    <td>
+                                                        <span style="color: #999999;font-size:12px">Fail</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-4 border-left">
+                        <table style="width:100%;height:200px;text-align: center;">
+                            <tbody>
+                                <tr style="height:100%">
+                                    <td>
+                                        <table style="width:100%">
+                                            <tbody>
+                                                <tr style="height:100%">
+                                                    <td style="font-size:60px; color:#9e6b6b">__xpass__</td>
+                                                    <td style="font-size:60px; color:#96a74c">__xfail__</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <span style="color: #999999;font-size:12px">xPass</span>
+                                                    </td>
+                                                    <td>
+                                                        <span style="color: #999999;font-size:12px">xFail</span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-3"> <a class="tile tile-head">__skip__<p style="font-size:12px">Skip</p></a></div>
-                    <div class="col-md-3"> <a class="tile tile-info">__error__<p style="font-size:12px">Error</p></a></div>
-                    <div class="col-md-3"> <a class="tile tile-pass">__xpass__<p style="font-size:12px">xPass</p></a></div>
-                    <div class="col-md-3"> <a class="tile tile-fail">__xfail__<p style="font-size:12px">xFail</p></a></div>
-                </div>
-            
                 <hr/>
-                <div class="row">
-                    <div class="col-md-4" style="background-color:white;height:350px;width:auto;border:groove;"> <span style="font-weight:bold">Test Status:</span>
+                <div class="row rowcard">
+                    <div class="col-md-4"> <span style="font-weight:bold;color:gray">Test Status:</span>
                         <div id="testChartID" style="height:280px;width:auto;"></div>
                     </div>
-                    <div class="col-md-8" style="background-color:white;height:350px;width:auto;border:groove;"> <span style="font-weight:bold">Top 5 Suite Failures:</span>
+                    <div class="col-md-8"> <span style="font-weight:bold;color:gray">Top 5 Suite Failures:</span>
                         <div id="suiteBarID" style="height:300px;width:auto;"></div>
                     </div>
                 </div>
                 <hr/>
-                <div class="row">
-                    <div class="col-md-12" style="background-color:white;height:450px;width:auto;border:groove;"> <span style="font-weight:bold">Top 10 Test Performance (sec):</span>
+                <div class="row rowcard">
+                    <div class="col-md-12" style="height:450px;width:auto;"> <span style="font-weight:bold;color:gray">Top 10 Test Performance (sec):</span>
                         <div id="testsBarID" style="height:400px;width:auto;"></div>
                     </div>
                 </div>
+                <hr/>
                 <div class="row">
-                    <div class="col-md-12" style="height:25px;width:auto;">
+                    <div class="col-md-12" style="width:auto;">
                         <p class="text-muted" style="text-align:center;font-size:9px"> <a href="https://github.com/adiralashiva8/pytest-metrics" target="_blank">pytest-metrics</a>
                         </p>
                     </div>
@@ -537,20 +561,12 @@ def get_html_template():
                         createBarGraph('#tm', 1, 3, 10, 'testsBarID', 'Elapsed Time (s) ', 'Test');
                     };
                 </script>
-                <script>
-                    function openInNewTab(url, element_id) {
-                        var element_id = element_id;
-                        var win = window.open(url, '_blank');
-                        win.focus();
-                        $('body').scrollTo(element_id);
-                    }
-                </script>
             </div>
-        
+
             <div class="tabcontent" id="suiteMetrics">
                 <h4><b><i class="fa fa-table"></i> Suite Metrics</b></h4>
                 <hr/>
-                <table class="table table-striped table-bordered" id="sm">
+                <table class="table row-border tablecard" id="sm">
                     <thead>
                         <tr>
                             <th>Suite</th>
@@ -573,7 +589,7 @@ def get_html_template():
         <div class="tabcontent" id="testMetrics">
             <h4><b><i class="fa fa-table"></i> Test Metrics</b></h4>
             <hr/>
-            <table class="table table-striped table-bordered" id="tm">
+            <table class="table row-border tablecard" id="tm">
                 <thead>
                     <tr>
                         <th>Suite</th>
@@ -591,215 +607,7 @@ def get_html_template():
                 <div class="col-md-12" style="height:25px;width:auto;"></div>
             </div>
         </div>
-        
-        <div class="tabcontent" id="statistics">
-            <h4><b><i class="fa fa-table"></i> Email Statistics</b></h4>
-            <hr/>
-            <button class="btn btn-primary active inner" id="create" onclick="this.style.visibility= 'hidden';" role="button"> <i class="fa fa-cogs">
-        </i> Generate Statistics Email</button>
-            <a class="btn btn-primary active inner" download="message.eml" id="downloadlink" role="button" style="display: none; width: 300px;"> <i class="fa fa-download">
-        </i> Click Here To Download Email</a>
-        <textarea class="col-md-12" id="textbox" style="height: 400px; padding:1em;">
-To: myemail1234@email.com
-Subject: Automation Execution Status
-X-Unsent: 1
-Content-Type: text/html
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>Test Email Sample</title>
-<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
-<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
-<meta content="width=device-width, initial-scale=1.0 " name="viewport"/>
-    <style>
-        body {
-            background-color:#F2F2F2; 
-        }
-        body, html, table {
-            font-family: Courier New, Arial, sans-serif;
-            font-size: 1em; 
-        }
-        .pastdue { color: crimson; }
-        table {
-            padding: 5px;
-            margin-left: 30px;
-            width: 800px;
-        }
-        thead {
-            text-align: center;
-            font-size: 1.1em;        
-            background-color: #B0C4DE;
-            font-weight: bold;
-            color: #2D2C2C;
-        }
-        tbody {
-            text-align: center;
-        }
-        th {
-            width: 25%;
-            word-wrap:break-word;
-        }
-    </style>
-</head>
-<body>
-    <p>Hi Team,</p>
-    <p>Following are the last build execution status</p>
-    <p></p>
-    <table>
-        <tbody>
-            <tr>
-                <td style="text-align:left; padding-left:5px;color:#0b6690;">
-                    <h2>Pytest Report</h2>
-                </td>
-                <td style="text-align:right; padding-right:10px;color:#0b6690;">
-                    <h3>Duration (s): __execution_time__</h3>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <table>
-        <tr>
-            <td></td>
-        </tr>
-    </table>
-    <table>
-        <tbody>
-        <tr>
-            <td style="background-color:#616161; color:white; width:25%">
-                <table style="width:100%;">
-                    <tbody>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__total__</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 14px;">Total</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-            <td style="background-color:#009688; color:white; width:25%">
-                <table style="width:100%;">
-                    <tbody>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__executed__</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 14px;">Executed</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-            <td style="background-color:#4CAF50; color:white; width:25%">
-                <table style="width:100%;">
-                    <tbody>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__pass__</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 14px;">Pass</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-            <td style="background-color:#f44336; color:white; width:25%">
-                <table style="width:100%;">
-                    <tbody>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__fail__</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 14px;">Fail</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td style="background-color:#616161; color:white; width:25%">
-                <table style="width:100%;">
-                    <tbody>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__skip__</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 14px;">Skip</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-            <td style="background-color:#009688; color:white; width:25%">
-                <table style="width:100%;">
-                    <tbody>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__error__</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 14px;">Error</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-            <td style="background-color:#4CAF50; color:white; width:25%">
-                <table style="width:100%;">
-                    <tbody>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__xpass__</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 14px;">xPass</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-            <td style="background-color:#f44336; color:white; width:25%">
-                <table style="width:100%;">
-                    <tbody>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 32px;">__xfail__</td>
-                        </tr>
-                        <tr>
-                            <td style="text-align:center; color:white;font-size: 14px;">Fail</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table>
-        <tr>
-            <td></td>
-        </tr>
-    </table>
-    <p>Please refer Pytest Metrics report for detailed statistics.<p>
-    <strong>Team QA</strong>
-</p></p></body></html></textarea>
-        </div>
-        </div>
-        <script>
-            (function() {
-                var textFile = null,
-                    makeTextFile = function(text) {
-                        var data = new Blob([text], {
-                            type: 'text/plain'
-                        });
-                        if (textFile !== null) {
-                            window.URL.revokeObjectURL(textFile);
-                        }
-                        textFile = window.URL.createObjectURL(data);
-                        return textFile;
-                    };
-
-                var create = document.getElementById('create'),
-                    textbox = document.getElementById('textbox');
-                create.addEventListener('click', function() {
-                    var link = document.getElementById('downloadlink');
-                    link.href = makeTextFile(textbox.value);
-                    link.style.display = 'block';
-                }, false);
-            })();
-        </script>
         <script>
             function createPieChart(pass_count, fail_count, xpass_count, xfail_count, ChartID, ChartName) {
                 var status = [];
@@ -810,18 +618,19 @@ Content-Type: text/html
 
                 var options = {
                     pieHole: 0.6,
-                    legend: 'none',
+                    legend: 'bottom',
                     chartArea: {
-                        width: "95%",
-                        height: "90%"
+                        width: "85%",
+                        height: "80%"
                     },
-                    colors: ['GREEN', 'RED', 'LIMEGREEN', 'FIREBRICK'],
+                    colors: ['#2ecc71', '#fc6666', '#9e6b6b', '#96a74c'],
                 };
 
                 var chart = new google.visualization.PieChart(document.getElementById(ChartID));
                 chart.draw(data, options);
             }
         </script>
+
         <script>
             function createBarGraph(tableID, keyword_column, time_column, limit, ChartID, Label, type) {
                 var status = [];
@@ -899,6 +708,7 @@ Content-Type: text/html
                 chart.draw(data, options);
             }
         </script>
+
         <script>
             function executeDataTable(tabname, sortCol) {
                 var fileTitle;
@@ -919,29 +729,72 @@ Content-Type: text/html
                         [Number(sortCol), "desc"]
                     ],
                     dom: 'l<".margin" B>frtip',
+                    "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
                     buttons: [
-                        'copy', {
-                            extend: 'csv',
-                            filename: function() {
-                                return fileTitle + '-' + new Date().toLocaleString();
-                            },
-                            title: '',
-                        }, {
-                            extend: 'excel',
-                            filename: function() {
-                                return fileTitle + '-' + new Date().toLocaleString();
-                            },
-                            title: '',
-                        }, {
-                            extend: 'print',
-                            title: '',
+                    {
+                        extend:    'copyHtml5',
+                        text:      '<i class="fa fa-files-o"></i>',
+                        filename: function() {
+                            return fileTitle + '-' + new Date().toLocaleString();
                         },
-                    ],
-                });
-            }
+                        titleAttr: 'Copy',
+                        exportOptions: {
+                            columns: ':visible'
+                        }
+					},
+
+                    {
+                        extend:    'csvHtml5',
+                        text:      '<i class="fa fa-file-text-o"></i>',
+                        titleAttr: 'CSV',
+                        filename: function() {
+                            return fileTitle + '-' + new Date().toLocaleString();
+                        },
+                        exportOptions: {
+                            columns: ':visible'
+                        }
+                    },
+
+                    {
+                        extend:    'excelHtml5',
+                        text:      '<i class="fa fa-file-excel-o"></i>',
+                        titleAttr: 'Excel',
+                        filename: function() {
+                            return fileTitle + '-' + new Date().toLocaleString();
+                        },
+                        exportOptions: {
+                            columns: ':visible'
+                        }
+                    },
+                    {
+                        extend:    'print',
+                        text:      '<i class="fa fa-print"></i>',
+                        titleAttr: 'Print',
+                        exportOptions: {
+                            columns: ':visible',
+                            alignment: 'left',
+                        }
+                    },
+                    {
+                        extend:    'colvis',
+                        collectionLayout: 'fixed two-column',
+                        text:      '<i class="fa fa-low-vision"></i>',
+                        titleAttr: 'Hide Column',
+                        exportOptions: {
+                            columns: ':visible'
+                        },
+                        postfixButtons: [ 'colvisRestore' ]
+                    },
+                ],
+                columnDefs: [ {
+                    visible: false,
+                } ]
+                }
+            );
+        }
         </script>
         <script>
-            function openPage(pageName, elmnt, color) {
+            function openPage(pageName,elmnt,color) {
                 var i, tabcontent, tablinks;
                 tabcontent = document.getElementsByClassName("tabcontent");
                 for (i = 0; i < tabcontent.length; i++) {
@@ -949,10 +802,10 @@ Content-Type: text/html
                 }
                 tablinks = document.getElementsByClassName("tablink");
                 for (i = 0; i < tablinks.length; i++) {
-                    tablinks[i].style.backgroundColor = "";
+                    tablinks[i].style.color = "";
                 }
                 document.getElementById(pageName).style.display = "block";
-                elmnt.style.backgroundColor = color;
+                elmnt.style.color = color;
 
             }
             // Get the element with id="defaultOpen" and click on it
@@ -963,9 +816,7 @@ Content-Type: text/html
             document.getElementById("defaultOpen").click();
         </script>
         <script>
-            $(window).on('load', function() {
-                $('.loader').fadeOut();
-            });
+            $(window).on('load',function(){$('.loader').fadeOut();});
         </script>
     </body>
 	"""
